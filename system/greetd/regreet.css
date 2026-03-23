@@ -1,0 +1,83 @@
+/* Mosswood palette for ReGreet */
+
+window {
+    background-color: #0a100e;
+    color: #c8e6da;
+}
+
+entry {
+    background-color: #1a2b25;
+    color: #c8e6da;
+    border: 1px solid #2a413a;
+    border-radius: 8px;
+    padding: 8px 12px;
+    caret-color: #7eed9f;
+}
+
+entry:focus {
+    border-color: #7eed9f;
+    box-shadow: 0 0 0 1px #7eed9f;
+}
+
+button {
+    background-color: #1a2b25;
+    color: #c8e6da;
+    border: 1px solid #2a413a;
+    border-radius: 8px;
+    padding: 8px 16px;
+}
+
+button:hover {
+    background-color: #213530;
+    border-color: #7eed9f;
+}
+
+button:active {
+    background-color: #2a413a;
+}
+
+/* Login button / primary action */
+button.suggested-action {
+    background-color: #2db87a;
+    color: #0a100e;
+    border-color: #2db87a;
+    font-weight: 600;
+}
+
+button.suggested-action:hover {
+    background-color: #7eed9f;
+}
+
+/* Reboot/poweroff */
+button.destructive-action {
+    background-color: #1a2b25;
+    color: #e8927c;
+    border-color: #e8927c;
+}
+
+button.destructive-action:hover {
+    background-color: #e8927c;
+    color: #0a100e;
+}
+
+combobox,
+dropdown {
+    background-color: #1a2b25;
+    color: #c8e6da;
+    border: 1px solid #2a413a;
+    border-radius: 8px;
+}
+
+label {
+    color: #98bfb1;
+}
+
+/* Scrollbar */
+scrollbar slider {
+    background-color: #3a5a50;
+    border-radius: 4px;
+}
+
+scrollbar slider:hover {
+    background-color: #4a6e62;
+}

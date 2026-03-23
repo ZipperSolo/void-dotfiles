@@ -1,0 +1,1 @@
+SUBSYSTEM=="cpu", ACTION=="add", TEST=="cpufreq/scaling_governor", RUN+="/bin/chmod 0664 /sys%p/cpufreq/scaling_governor", GROUP="wheel"

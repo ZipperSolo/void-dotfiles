@@ -1,0 +1,5 @@
+$include /etc/inputrc
+
+# Shift+arrow keys
+"\e[1;2C": forward-word
+"\e[1;2D": backward-word

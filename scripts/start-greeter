@@ -1,0 +1,9 @@
+#!/bin/bash
+export LIBSEAT_BACKEND=seatd
+export XDG_RUNTIME_DIR=/tmp/greeter-runtime
+export GTK_USE_PORTAL=0
+export GTK_DEBUG=no-portals
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR"
+#exec cage -s -mlast -- regreet
+exec sway --config /etc/greetd/sway-config

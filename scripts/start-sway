@@ -1,0 +1,10 @@
+#!/bin/sh
+export XDG_SESSION_TYPE=wayland
+export XDG_CURRENT_DESKTOP=sway
+export LIBSEAT_BACKEND=seatd
+export XCURSOR_THEME=Adwaita
+export XCURSOR_SIZE=32
+export QT_STYLE_OVERRIDE=adwaita-dark
+export GTK_THEME=Adwaita:dark
+ulimit -n 1048576
+exec sway

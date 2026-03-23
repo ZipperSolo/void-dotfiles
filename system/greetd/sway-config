@@ -1,0 +1,8 @@
+
+output DP-1 resolution 3840x2160@144Hz position 0,0 scale 1.5
+output DP-2 disable
+output HDMI-A-1 disable
+
+# exec "regreet; swaymsg exit"
+exec "regreet --style /etc/greetd/regreet.css; swaymsg exit"
+include /etc/sway/config.d/*
