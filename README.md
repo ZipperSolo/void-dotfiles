@@ -1,5 +1,7 @@
 # Void Linux Dotfiles
 
+This is my personal setup as of 2026-03-22.
+
 Gaming PC setup: AMD RX 9070 XT, Ryzen 9800X3D, three monitors.
 
 ## Components
