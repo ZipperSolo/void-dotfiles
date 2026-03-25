@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mosswood — A Green Terminal Palette</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ── Base ── */
+    --crust:     #0a100e;
+    --mantle:    #0f1a16;
+    --base:      #141f1b;
+    --surface0:  #1a2b25;
+    --surface1:  #213530;
+    --surface2:  #2a413a;
+
+    /* ── Overlay ── */
+    --overlay0:  #3a5a50;
+    --overlay1:  #4a6e62;
+    --overlay2:  #5a8274;
+
+    /* ── Text ── */
+    --subtext0:  #7da396;
+    --subtext1:  #98bfb1;
+    --text:      #c8e6da;
+
+    /* ── Accents ── */
+    --green:     #7eed9f;
+    --teal:      #5ee4c0;
+    --sage:      #a3d9a5;
+    --mint:      #b4f0d1;
+    --emerald:   #3dd68c;
+    --lime:      #c3f76b;
+    --pine:      #2db87a;
+    --moss:      #6abf7b;
+
+    /* ── Extended ── */
+    --rose:      #e8927c;
+    --gold:      #e4c76a;
+    --lavender:  #b4a6e8;
+    --sky:       #6ec4e8;
+    --peach:     #f0a882;
+    --maroon:    #d46a7e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--crust);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .noise {
+    position: fixed;
+    inset: 0;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 256px;
+    z-index: 9999;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 3rem 2rem 6rem;
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    margin-bottom: 4rem;
+    animation: fadeUp 0.8s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--green), var(--teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+
+  .logo-icon {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 20px var(--green), 0 0 60px rgba(126, 237, 159, 0.3);
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    position: relative;
+    top: -2px;
+  }
+
+  .subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--subtext0);
+    font-size: 0.85rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* ── Section ── */
+  section {
+    margin-bottom: 3.5rem;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--overlay2);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    padding-left: 0.1rem;
+  }
+
+  .section-label::before {
+    content: '# ';
+    color: var(--green);
+    opacity: 0.6;
+  }
+
+  /* ── Color Row ── */
+  .palette-grid {
+    display: grid;
+    gap: 2px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--crust);
+    border: 1px solid var(--surface1);
+  }
+
+  .palette-grid.bases   { grid-template-columns: repeat(6, 1fr); }
+  .palette-grid.accents { grid-template-columns: repeat(4, 1fr); }
+  .palette-grid.ext     { grid-template-columns: repeat(6, 1fr); }
+
+  .swatch {
+    position: relative;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem 0.5rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    overflow: hidden;
+  }
+
+  .swatch:hover {
+    transform: scale(1.02);
+    z-index: 2;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+
+  .swatch:hover .swatch-hex {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .swatch-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .swatch-hex {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 300;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: all 0.2s ease;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    margin-top: 0.2rem;
+  }
+
+  .swatch.dark-text .swatch-name,
+  .swatch.dark-text .swatch-hex {
+    color: var(--base);
+    text-shadow: none;
+  }
+
+  /* ── Copied Toast ── */
+  .swatch .toast {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: var(--base);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    border: 1px solid var(--green);
+  }
+
+  .swatch .toast.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  /* ── Preview Terminal ── */
+  .terminal {
+    background: var(--base);
+    border: 1px solid var(--surface1);
+    border-radius: 12px;
+    overflow: hidden;
+    animation: fadeUp 0.8s ease 0.3s both;
+  }
+
+  .terminal-bar {
+    background: var(--mantle);
+    padding: 0.7rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--surface0);
+  }
+
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .terminal-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--subtext0);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .terminal-body {
+    padding: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.8;
+  }
+
+  .terminal-body .prompt { color: var(--green); }
+  .terminal-body .cmd    { color: var(--text); }
+  .terminal-body .flag   { color: var(--teal); }
+  .terminal-body .string { color: var(--sage); }
+  .terminal-body .comment{ color: var(--overlay1); font-style: italic; }
+  .terminal-body .kw     { color: var(--lavender); }
+  .terminal-body .fn     { color: var(--sky); }
+  .terminal-body .num    { color: var(--peach); }
+  .terminal-body .type   { color: var(--gold); }
+  .terminal-body .err    { color: var(--rose); }
+  .terminal-body .ok     { color: var(--emerald); }
+  .terminal-body .dim    { color: var(--overlay0); }
+
+  /* ── CSS Vars Block ── */
+  .vars-block {
+    background: var(--mantle);
+    border: 1px solid var(--surface0);
+    border-radius: 12px;
+    padding: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.9;
+    overflow-x: auto;
+    animation: fadeUp 0.8s ease 0.5s both;
+  }
+
+  .vars-block .sel  { color: var(--teal); }
+  .vars-block .prop { color: var(--green); }
+  .vars-block .val  { color: var(--sage); }
+  .vars-block .punc { color: var(--overlay1); }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .palette-grid.bases   { grid-template-columns: repeat(3, 1fr); }
+    .palette-grid.accents { grid-template-columns: repeat(2, 1fr); }
+    .palette-grid.ext     { grid-template-columns: repeat(3, 1fr); }
+    .logo { font-size: 2rem; }
+    .container { padding: 2rem 1rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+
+<div class="container">
+
+  <header>
+    <div class="logo"><span class="logo-icon"></span>mosswood</div>
+    <div class="subtitle">a green terminal palette</div>
+  </header>
+
+  <!-- ── Bases ── -->
+  <section>
+    <div class="section-label">Base &amp; Surface</div>
+    <div class="palette-grid bases" id="bases"></div>
+  </section>
+
+  <!-- ── Accents ── -->
+  <section>
+    <div class="section-label">Accent Greens</div>
+    <div class="palette-grid accents" id="accents"></div>
+  </section>
+
+  <!-- ── Extended ── -->
+  <section>
+    <div class="section-label">Extended Palette</div>
+    <div class="palette-grid ext" id="extended"></div>
+  </section>
+
+  <!-- ── Terminal Preview ── -->
+  <section>
+    <div class="section-label">Terminal Preview</div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot" style="background:var(--rose)"></div>
+        <div class="terminal-dot" style="background:var(--gold)"></div>
+        <div class="terminal-dot" style="background:var(--green)"></div>
+        <div class="terminal-title">~/.config/sway/config</div>
+      </div>
+      <div class="terminal-body">
+        <div><span class="comment"># mosswood palette — sway config snippet</span></div>
+        <div><span class="kw">set</span> <span class="type">$green</span>  <span class="string">#7eed9f</span></div>
+        <div><span class="kw">set</span> <span class="type">$teal</span>   <span class="string">#5ee4c0</span></div>
+        <div><span class="kw">set</span> <span class="type">$base</span>   <span class="string">#141f1b</span></div>
+        <div><span class="kw">set</span> <span class="type">$surface</span> <span class="string">#1a2b25</span></div>
+        <div style="height:0.6rem"></div>
+        <div><span class="comment"># class                 border    bg        text      indicator child</span></div>
+        <div><span class="fn">client.focused</span>          <span class="string">$green</span>  <span class="string">$surface</span> <span class="string">$text</span>     <span class="string">$teal</span>     <span class="string">$green</span></div>
+        <div><span class="fn">client.unfocused</span>        <span class="string">$base</span>   <span class="string">$base</span>    <span class="dim">$overlay</span>  <span class="string">$base</span>     <span class="string">$base</span></div>
+        <div style="height:0.6rem"></div>
+        <div><span class="prompt">jrz@void</span> <span class="dim">~</span> <span class="ok">λ</span> <span class="cmd">swaymsg</span> <span class="flag">-t</span> <span class="cmd">get_outputs</span> <span class="dim">|</span> <span class="cmd">jq</span> <span class="string">'.[].name'</span></div>
+        <div><span class="string">"DP-1"</span></div>
+        <div><span class="string">"DP-2"</span></div>
+        <div><span class="string">"HDMI-A-1"</span></div>
+        <div><span class="prompt">jrz@void</span> <span class="dim">~</span> <span class="ok">λ</span> <span class="dim">▌</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CSS Variables ── -->
+  <section>
+    <div class="section-label">CSS Variables</div>
+    <div class="vars-block">
+      <div><span class="sel">:root</span> <span class="punc">{</span></div>
+      <div>&nbsp;&nbsp;<span class="prop">--crust</span><span class="punc">:</span>   <span class="val">#0a100e</span><span class="punc">;</span>    <span class="prop">--mantle</span><span class="punc">:</span>  <span class="val">#0f1a16</span><span class="punc">;</span></div>
+      <div>&nbsp;&nbsp;<span class="prop">--base</span><span class="punc">:</span>    <span class="val">#141f1b</span><span class="punc">;</span>    <span class="prop">--surface0</span><span class="punc">:</span> <span class="val">#1a2b25</span><span class="punc">;</span></div>
+      <div>&nbsp;&nbsp;<span class="prop">--surface1</span><span class="punc">:</span> <span class="val">#213530</span><span class="punc">;</span>   <span class="prop">--surface2</span><span class="punc">:</span> <span class="val">#2a413a</span><span class="punc">;</span></div>
+      <div>&nbsp;&nbsp;<span class="prop">--green</span><span class="punc">:</span>   <span class="val">#7eed9f</span><span class="punc">;</span>    <span class="prop">--teal</span><span class="punc">:</span>    <span class="val">#5ee4c0</span><span class="punc">;</span></div>
+      <div>&nbsp;&nbsp;<span class="prop">--sage</span><span class="punc">:</span>    <span class="val">#a3d9a5</span><span class="punc">;</span>    <span class="prop">--mint</span><span class="punc">:</span>    <span class="val">#b4f0d1</span><span class="punc">;</span></div>
+      <div>&nbsp;&nbsp;<span class="prop">--emerald</span><span class="punc">:</span> <span class="val">#3dd68c</span><span class="punc">;</span>    <span class="prop">--lime</span><span class="punc">:</span>    <span class="val">#c3f76b</span><span class="punc">;</span></div>
+      <div>&nbsp;&nbsp;<span class="prop">--pine</span><span class="punc">:</span>    <span class="val">#2db87a</span><span class="punc">;</span>    <span class="prop">--moss</span><span class="punc">:</span>    <span class="val">#6abf7b</span><span class="punc">;</span></div>
+      <div>&nbsp;&nbsp;<span class="prop">--text</span><span class="punc">:</span>    <span class="val">#c8e6da</span><span class="punc">;</span>    <span class="prop">--subtext1</span><span class="punc">:</span> <span class="val">#98bfb1</span><span class="punc">;</span></div>
+      <div>&nbsp;&nbsp;<span class="prop">--rose</span><span class="punc">:</span>    <span class="val">#e8927c</span><span class="punc">;</span>    <span class="prop">--gold</span><span class="punc">:</span>    <span class="val">#e4c76a</span><span class="punc">;</span></div>
+      <div>&nbsp;&nbsp;<span class="prop">--lavender</span><span class="punc">:</span> <span class="val">#b4a6e8</span><span class="punc">;</span>   <span class="prop">--sky</span><span class="punc">:</span>     <span class="val">#6ec4e8</span><span class="punc">;</span></div>
+      <div>&nbsp;&nbsp;<span class="prop">--peach</span><span class="punc">:</span>   <span class="val">#f0a882</span><span class="punc">;</span>    <span class="prop">--maroon</span><span class="punc">:</span>  <span class="val">#d46a7e</span><span class="punc">;</span></div>
+      <div><span class="punc">}</span></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const palettes = {
+  bases: [
+    { name: 'Crust',    hex: '#0a100e', dark: false },
+    { name: 'Mantle',   hex: '#0f1a16', dark: false },
+    { name: 'Base',     hex: '#141f1b', dark: false },
+    { name: 'Surface 0',hex: '#1a2b25', dark: false },
+    { name: 'Surface 1',hex: '#213530', dark: false },
+    { name: 'Surface 2',hex: '#2a413a', dark: false },
+  ],
+  accents: [
+    { name: 'Green',   hex: '#7eed9f', dark: true },
+    { name: 'Teal',    hex: '#5ee4c0', dark: true },
+    { name: 'Sage',    hex: '#a3d9a5', dark: true },
+    { name: 'Mint',    hex: '#b4f0d1', dark: true },
+    { name: 'Emerald', hex: '#3dd68c', dark: true },
+    { name: 'Lime',    hex: '#c3f76b', dark: true },
+    { name: 'Pine',    hex: '#2db87a', dark: false },
+    { name: 'Moss',    hex: '#6abf7b', dark: true },
+  ],
+  extended: [
+    { name: 'Text',     hex: '#c8e6da', dark: true },
+    { name: 'Subtext',  hex: '#98bfb1', dark: true },
+    { name: 'Rose',     hex: '#e8927c', dark: true },
+    { name: 'Gold',     hex: '#e4c76a', dark: true },
+    { name: 'Lavender', hex: '#b4a6e8', dark: true },
+    { name: 'Sky',      hex: '#6ec4e8', dark: true },
+  ]
+};
+
+function buildSwatches(id, colors) {
+  const grid = document.getElementById(id);
+  colors.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'swatch' + (c.dark ? ' dark-text' : '');
+    el.style.background = c.hex;
+    el.style.animationDelay = (i * 0.05) + 's';
+    el.innerHTML = `
+      <span class="swatch-name">${c.name}</span>
+      <span class="swatch-hex">${c.hex}</span>
+      <span class="toast">copied</span>
+    `;
+    el.addEventListener('click', () => {
+      navigator.clipboard.writeText(c.hex);
+      const toast = el.querySelector('.toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 800);
+    });
+    grid.appendChild(el);
+  });
+}
+
+buildSwatches('bases', palettes.bases);
+buildSwatches('accents', palettes.accents);
+buildSwatches('extended', palettes.extended);
+</script>
+
+</body>
+</html>
